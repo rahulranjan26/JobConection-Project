@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: connection-service
+
+  neo4j:
+    uri: ${SPRING_NEO4J_URI:bolt://localhost:7687}
+    authentication:
+      username: ${SPRING_NEO4J_AUTHENTICATION_USERNAME:neo4j}
+      password: ${SPRING_NEO4J_AUTHENTICATION_PASSWORD:password}
+
+  kafka:
+    consumer:
+      bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+      group-id: connection-service
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.add.type.headers: true
+      key-deserializer: org.apache.kafka.common.serialization.LongDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+server:
+  port: 9030
+  servlet:
+    context-path: /api/v1/connections
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
+    register-with-eureka: true
+
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # 1.0 captures 100% of requests (good for dev)
+  zipkin:
+    tracing:
+      endpoint: "${ZIPKIN_URL:http://localhost:9411}/api/v2/spans"
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

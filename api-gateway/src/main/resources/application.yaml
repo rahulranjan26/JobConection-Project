@@ -1,0 +1,73 @@
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+    register-with-eureka: true
+    fetch-registry: true
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: post-service
+          uri: lb://post-service
+          predicates:
+            - Path=/api/v1/posts/**
+          filters:
+            - name: AuthenticationFilter
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/v1/users/**
+
+        - id: connection-service
+          uri: lb://connection-service
+          predicates:
+            - Path=/api/v1/connections/**
+          filters:
+            - name: AuthenticationFilter
+
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/v1/notifications/**
+          filters:
+            - name: AuthenticationFilter
+
+        - id: uploader-service
+          uri: lb://uploader-service
+          predicates:
+            - Path=/api/v1/upload/**
+          filters:
+            - name: AuthenticationFilter
+
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+
+  secretKey: ${JWT_SECRET_KEY:dskjjnkfasndifuqhwkndsljfqadskmnadsjfiqjfkanKJkskanskniasmvjabasnanvksdnksaknkbajhvbvasbvakbvakslaabs}
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # 1.0 captures 100% of requests (good for dev)
+  zipkin:
+    tracing:
+      endpoint: "${ZIPKIN_URL:http://localhost:9411}/api/v2/spans"
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

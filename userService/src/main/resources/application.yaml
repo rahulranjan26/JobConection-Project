@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/userservice}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:rahul@1995}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.add.type.headers: true
+
+  secretKey: ${SPRING_SECRET_KEY:dskjjnkfasndifuqhwkndsljfqadskmnadsjfiqjfkanKJkskanskniasmvjabasnanvksdnksaknkbajhvbvasbvakbvakslaabs}
+
+server:
+  port: 9020
+  servlet:
+    context-path: /api/v1/users
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
+    register-with-eureka: true
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0  # 1.0 captures 100% of requests (good for dev)
+  zipkin:
+    tracing:
+      endpoint: "${ZIPKIN_URL:http://localhost:9411}/api/v2/spans"
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
