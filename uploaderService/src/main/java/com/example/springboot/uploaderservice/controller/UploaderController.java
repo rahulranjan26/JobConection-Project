@@ -11,10 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class UploaderController {
     private final UploaderService uploaderService;
+
     @PostMapping(path = "/fileUpload")
     public ResponseEntity<String> uploadFile(@RequestPart("file") MultipartFile file) {
         String url = uploaderService.upload(file);
         return ResponseEntity.ok(url);
     }
 }
-

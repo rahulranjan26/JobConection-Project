@@ -38,6 +38,7 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-service:8761/eureka
       - SPRING_SECRET_KEY=dskjjnkfasndifuqhwkndsljfqadskmnadsjfiqjfkanKJkskanskniasmvjabasnanvksdnksaknkbajhvbvasbvakbvakslaabs
       - ZIPKIN_URL=http://zipkin:9411
+      - JAVA_TOOL_OPTIONS=-Dreactor.schedulers.defaultAutomaticContextPropagation=true
     networks:
       - app-network
 
@@ -124,8 +125,10 @@ services:
     image: rahulranjan26/linkedin-app-uploader-service:latest
     container_name: uploader-service
     depends_on:
-      - discovery-service
-      - zipkin
+      discovery-service:
+        condition: service_started
+      zipkin:
+        condition: service_healthy
     ports:
       - "9050:9050"
     environment:
