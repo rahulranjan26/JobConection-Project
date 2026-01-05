@@ -1,6 +1,5 @@
 package com.example.springboot.postservice.client;
 
-
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,15 +14,9 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.support.SpringEncoder;
 
-
-@FeignClient(
-        name = "uploader-service",
-        path = "/api/v1/upload/core",
-        url = "${UPLOADER_SERVICE_URI:}",
-        configuration = UploaderServiceClient.MultipartSupportConfig.class
-)
+@FeignClient(name = "uploader-service", url = "${UPLOADER_SERVICE_URI:}", configuration = UploaderServiceClient.MultipartSupportConfig.class)
 public interface UploaderServiceClient {
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "/api/v1/upload/core/fileUpload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<String> uploadFile(@RequestPart("file") MultipartFile file);
 
     @Configuration

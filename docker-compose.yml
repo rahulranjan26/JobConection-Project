@@ -125,10 +125,8 @@ services:
     image: rahulranjan26/linkedin-app-uploader-service:latest
     container_name: uploader-service
     depends_on:
-      discovery-service:
-        condition: service_started
-      zipkin:
-        condition: service_healthy
+      - discovery-service
+      - zipkin
     ports:
       - "9050:9050"
     environment:

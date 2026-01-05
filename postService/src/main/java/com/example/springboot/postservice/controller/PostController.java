@@ -26,10 +26,9 @@ public class PostController {
     private final PostService postService;
     private final ConnectionsServiceClient connectionsServiceClient;
 
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PostDto> createPost(@RequestPart("post") PostCreateDto postCreateDto,
-                                              @RequestPart("file") MultipartFile file) {
+            @RequestPart("file") MultipartFile file) {
         PostDto postDto = postService.createPost(postCreateDto, AuthContextHolder.getCurrentUserId(), file);
         return new ResponseEntity<>(postDto, HttpStatus.OK);
 
@@ -39,8 +38,9 @@ public class PostController {
     public ResponseEntity<PostDto> getPost(@PathVariable Long postId) {
         log.info("User Id is : {}", AuthContextHolder.getCurrentUserId());
         PostDto postDto = postService.findPostById(postId);
-//        List<PersonDto> connections = connectionsServiceClient.getSecondDegreeConnection(AuthContextHolder.getCurrentUserId());
-//        log.info(connections.toString());
+        // List<PersonDto> connections =
+        // connectionsServiceClient.getSecondDegreeConnection(AuthContextHolder.getCurrentUserId());
+        // log.info(connections.toString());
         return new ResponseEntity<>(postDto, HttpStatus.OK);
     }
 
